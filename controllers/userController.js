@@ -1,5 +1,5 @@
-const models = require('../models');
-const User = models.User;
+const User = require('../models/User');
+
 
 function index(req, res) {
 	User.find({}, function(err, foundUsers) {
