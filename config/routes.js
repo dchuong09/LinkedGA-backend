@@ -19,7 +19,7 @@ router.delete('/api/users/:user_id', userController.destroy);
 
 
 // Register
-router.post('/register', (req, res) => {
+router.post('/api/users/register', (req, res) => {
 	// Find User by Email
 	User.findOne({ email: req.body.email })
 	  .then(user => {
@@ -28,7 +28,7 @@ router.post('/register', (req, res) => {
 	  		return res.status(400).json({ email: 'Email already exists'});
 	  		// If not exists, create new user
 	  	} else {
-	  		// Get avatar from Gravatar 
+	  		// Get avatar from Gravatar
 	  		const avatar = gravatar.url(req.body.email, {
 	  			s: '200',
 	  			r: 'pg',
@@ -37,8 +37,10 @@ router.post('/register', (req, res) => {
 
 	  		// Create new user
 	  		const newUser = new User({
-	  			name: req.body.name, 
+	  			name: req.body.name,
 	  			email: req.body.email,
+					location: req.body.location,
+					github: req.body.github,
 	  			avatar,
 	  			password: req.body.password,
 	  		});
@@ -48,10 +50,10 @@ router.post('/register', (req, res) => {
 	  			bcrypt.hash(newUser.password, salt, (err, hash) => {
 	  				if (err) throw err;
 	  				newUser.password = hash;
-	  				newUser.save() 
+	  				newUser.save()
 	  				  .then(user => res.json(user))
 	  				  .catch(err => console.log(err));
-	  			})	
+	  			})
 	  		})
 	  	}
 	  })
@@ -59,7 +61,7 @@ router.post('/register', (req, res) => {
 
 
 // Login
-router.post('/login', (req, res) => {
+router.post('/api/users/login', (req, res) => {
 	const email = req.body.email;
 	const password = req.body.password;
 
@@ -71,7 +73,7 @@ router.post('/login', (req, res) => {
 	  	}
 
 	  	// Check password
-	  	bcrypt.compare(password, user.password) 
+	  	bcrypt.compare(password, user.password)
 	  	  .then(isMatch => {
 	  	  	if (isMatch) {
 	  	  		// User matched, send JSON Web Token
@@ -91,16 +93,18 @@ router.post('/login', (req, res) => {
 })
 
 // GET api/users/current (Private)
-router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.get('/api/users/current', passport.authenticate('jwt', { session: false }), (req, res) => {
 	res.json({
 		id: req.user.id,
-		name: req.user.name, 
-		email: req.user.email, 
+		name: req.user.name,
+		email: req.user.email,
+		location: req.body.location,
+		github: req.body.github,
 		avatar: req.user.avatar,
 	})
 })
 
 // GET api/users/test (Public)
-router.get('/api/test', (req, res) => res.json({msg: 'Users Endpoint Ok'}));
+router.get('/test', (req, res) => res.json({msg: 'Users Endpoint Ok'}));
 
 module.exports = router;

@@ -5,27 +5,29 @@ const UserSchema = new Schema({
 	name: {
 		type: String,
 		require: true
-	}, 
+	},
 	email: {
-		type: String, 
+		type: String,
 		require: true
-	}, 
+	},
 	password: {
 		type: String,
 		require: true
-	}, 
+	},
 	avatar: {
 		type: String
-	}, 
+	},
 	date: {
 		type: Date,
 		default: Date.now
-	}, 
+	},
 	github: {
-		type: String
-	}, 
+		type: String,
+		require: true
+	},
 	location: {
-		type: String
+		type: String,
+		require: true
 	}
 })
 

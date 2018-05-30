@@ -1,4 +1,4 @@
 module.exports = {
-	mongoURI: 'mongodb://linkedga:Nothing09@ds139950.mlab.com:39950/linkedga',
+	mongoURI: 'mongodb://linkedga:goldfish44@ds239930.mlab.com:39930/linkedga',
 	secretOrKey: 'sososecret'
 }
