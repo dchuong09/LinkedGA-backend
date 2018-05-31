@@ -8,6 +8,13 @@ function index(req, res) {
 	})
 }
 
+function profile(req, res) {
+	User.findById(req.body.id, function(err, foundUser) {
+		if (err) res.send('User show controller err: ', err);
+		console.log(req.body.id)
+	})
+}
+
 function show(req, res) {
 	User.findById(req.params.user_id, function(err, foundUser) {
 		if (err) res.send('User show controller err: ', err);
@@ -39,6 +46,7 @@ function destroy(req, res) {
 module.exports = {
 	index: index,
 	show: show,
+	profile: profile,
 	create: create,
 	update: update,
 	destroy: destroy

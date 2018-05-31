@@ -6,20 +6,20 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const keys = require('./keys');
 const userController = require('../controllers/userController');
+const chatroomController = require('../controllers/chatroomController');
 
 // Load User Model
 const User = require('../models/User');
 
-// User Routes
-router.get('/api/users', userController.index);
-router.post('/api/users', userController.create);
-router.get('/api/users/:user_id', userController.show);
-router.put('/api/users/:user_id', userController.update);
-router.delete('/api/users/:user_id', userController.destroy);
+
+
+// Chatroom Routes
+router.get('/api/chatroom', chatroomController.index);
+router.post('/api/chatroom', chatroomController.create);
 
 
 // Register
-router.post('/api/users/register', (req, res) => {
+router.post('/api/register', (req, res) => {
 	// Find User by Email
 	User.findOne({ email: req.body.email })
 	  .then(user => {
@@ -61,7 +61,7 @@ router.post('/api/users/register', (req, res) => {
 
 
 // Login
-router.post('/api/users/login', (req, res) => {
+router.post('/api/login', (req, res) => {
 	const email = req.body.email;
 	const password = req.body.password;
 
@@ -93,16 +93,33 @@ router.post('/api/users/login', (req, res) => {
 })
 
 // GET api/users/current (Private)
-router.get('/api/users/current', passport.authenticate('jwt', { session: false }), (req, res) => {
-	res.json({
-		id: req.user.id,
-		name: req.user.name,
-		email: req.user.email,
-		location: req.body.location,
-		github: req.body.github,
-		avatar: req.user.avatar,
+// router.get('/api/users/current', passport.authenticate('jwt', { session: false }), (req, res) => {
+// 	res.json({
+// 		id: req.user.id,
+// 		name: req.user.name,
+// 		email: req.user.email,
+// 		location: req.body.location,
+// 		github: req.body.github,
+// 		avatar: req.user.avatar,
+// 	})
+// })
+//
+router.get('/api/users/:user_id', passport.authenticate('jwt', { session: false }), (req, res) => {
+	User.findById(req.params.user_id, function(err, foundUser) {
+		if (err) console.log('User:id show err', err);
+		res.json(foundUser);
 	})
 })
+
+
+
+
+// router.get('/api/users/:user_id', userController.show);
+// User Routes
+router.get('/api/users', userController.index);
+router.post('/api/users', userController.create);
+router.put('/api/users/:user_id', userController.update);
+router.delete('/api/users/:user_id', userController.destroy);
 
 // GET api/users/test (Public)
 router.get('/test', (req, res) => res.json({msg: 'Users Endpoint Ok'}));

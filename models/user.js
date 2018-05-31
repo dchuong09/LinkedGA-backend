@@ -28,7 +28,7 @@ const UserSchema = new Schema({
 	location: {
 		type: String,
 		require: true
-	}
+	},
 })
 
 const User = mongoose.model('users', UserSchema);
