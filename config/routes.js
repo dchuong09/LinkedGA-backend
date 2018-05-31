@@ -104,21 +104,37 @@ router.post('/api/login', (req, res) => {
 // 	})
 // })
 //
-router.get('/api/users/:user_id', passport.authenticate('jwt', { session: false }), (req, res) => {
-	User.findById(req.params.user_id, function(err, foundUser) {
+router.get('/api/:user_id/profile', passport.authenticate('jwt', { session: false }), (req, res) => {
+	let id = req.params.user_id;
+	User.findById(id, function(err, foundUser) {
 		if (err) console.log('User:id show err', err);
 		res.json(foundUser);
 	})
 })
 
+router.put('/api/:user_id/profile', passport.authenticate('jwt', { session: false }), (req, res) => {
+	let id = req.params.user_id;
+	User.findByIdAndUpdate(id, { $set: req.body }, function (err, foundUser) {
+		if (err) console.log('User:id update err', err);
+		res.json(foundUser);
+	})
+})
 
+router.get('/api/users/:user_id', (req, res) => {
+	User.findById(req.params.user_id, function (err, foundUser) {
+		if (err) console.log('User:id show err', err);
+		res.json(foundUser);
+	})
+})
+
+// router.put('/api/users/:user_id', userController.update);
 
 
 // router.get('/api/users/:user_id', userController.show);
 // User Routes
 router.get('/api/users', userController.index);
 router.post('/api/users', userController.create);
-router.put('/api/users/:user_id', userController.update);
+
 router.delete('/api/users/:user_id', userController.destroy);
 
 // GET api/users/test (Public)
