@@ -4,7 +4,6 @@ const mongoose = require('mongoose'),
 const ChatroomSchema = new Schema({
 	name: String,
 	message: String,
-
 })
 
 const Chatroom = mongoose.model('Chatroom', ChatroomSchema);

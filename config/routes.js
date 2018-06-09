@@ -10,6 +10,7 @@ const chatroomController = require('../controllers/chatroomController');
 
 // Load User Model
 const User = require('../models/User');
+const Project = require('../models/Project');
 
 
 
@@ -34,13 +35,17 @@ router.post('/api/register', (req, res) => {
 	  			r: 'pg',
 	  			d: 'mm',
 	  		});
+			
 
 	  		// Create new user
 	  		const newUser = new User({
 	  			name: req.body.name,
 	  			email: req.body.email,
-					location: req.body.location,
-					github: req.body.github,
+				location: req.body.location,
+				github: req.body.github,
+				course: req.body.course,
+				status: req.body.status,
+				photo: req.body.photo,
 	  			avatar,
 	  			password: req.body.password,
 	  		});
@@ -92,18 +97,7 @@ router.post('/api/login', (req, res) => {
 	  })
 })
 
-// GET api/users/current (Private)
-// router.get('/api/users/current', passport.authenticate('jwt', { session: false }), (req, res) => {
-// 	res.json({
-// 		id: req.user.id,
-// 		name: req.user.name,
-// 		email: req.user.email,
-// 		location: req.body.location,
-// 		github: req.body.github,
-// 		avatar: req.user.avatar,
-// 	})
-// })
-//
+
 router.get('/api/:user_id/profile', passport.authenticate('jwt', { session: false }), (req, res) => {
 	let id = req.params.user_id;
 	User.findById(id, function(err, foundUser) {
@@ -117,6 +111,42 @@ router.put('/api/:user_id/profile', passport.authenticate('jwt', { session: fals
 	User.findByIdAndUpdate(id, { $set: req.body }, function (err, foundUser) {
 		if (err) console.log('User:id update err', err);
 		res.json(foundUser);
+	})
+})
+
+router.get('/api/:user_id/profile', passport.authenticate('jwt', { session: false }), (req, res) => {
+	let id = req.params.user_id;
+	User.findById(id, function (err, foundUser) {
+		if (err) console.log('User:id show err', err);
+		else {
+			let projects = foundUser.projects
+			res.json(projects);
+		}
+	})
+})
+
+router.get('/api/:user_id/profile', passport.authenticate('jwt', { session: false }), (req, res) => {
+	let id = req.params.user_id;
+	Project.findById(id, function (err, showProject) {
+		if (err) console.log('User:id show err', err);
+		res.json(showProject);
+	})
+})
+
+// Add new project to profile
+router.post('/api/:user_id/profile', passport.authenticate('jwt', { session: false }), (req, res) => {
+	Project.create(req.body, function (err, projectSuccess) {
+		if (err) console.log(err);
+		else {
+			User.findById(req.params.user_id, function(err, userSuccess) {
+				if (err) console.log(err);
+				else {
+					userSuccess.projects.push(projectSuccess);
+					userSuccess.save();
+					res.json(projectSuccess);
+				}
+			})
+		}
 	})
 })
 
